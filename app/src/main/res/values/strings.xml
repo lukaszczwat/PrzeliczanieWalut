@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">PrzeliczanieWaluty</string>
+
+    <string name="wartoscDoWpisania">Wpisz Wartość</string>
+    <string name="wartoscPoPrzeliczeniu">Naciśnij Przelicz</string>
+    <string name="kursWaluty">Kurs Waluty</string>
+    <string name="przelicz">Przelicz</string>
+
 </resources>
