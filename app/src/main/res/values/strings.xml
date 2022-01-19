@@ -5,5 +5,7 @@
     <string name="wartoscPoPrzeliczeniu">Naciśnij Przelicz</string>
     <string name="kursWaluty">Kurs Waluty</string>
     <string name="przelicz">Przelicz</string>
+    <string name="CHANNEL_ID">Currency</string>
+    <string name="ANDROID_NAME">ANDROID CHANEL</string>
 
 </resources>

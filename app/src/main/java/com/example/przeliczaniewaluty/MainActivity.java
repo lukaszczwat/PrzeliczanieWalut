@@ -2,6 +2,7 @@ package com.example.przeliczaniewaluty;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Notification;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -98,8 +99,31 @@ public class MainActivity extends AppCompatActivity {
                         show_toast.showToast(getApplicationContext(),"Wprowadź poprawną kwotę do konwersji");
 
                     } else {
-                        //TODO: Konwertowanie wprowadzonych danych
+                        String question = "https://currency-converter5.p.rapidapi.com/currency/convert?format=json&from=" + fromWartosc + "&to=" + toWartosc + "&amount=" + kwotaWaluty.getText().toString();
 
+                        try {
+                            odpowiedz = new JSONQuestion(MainActivity.this)
+                                    .execute(question)
+                                    .get();
+                        } catch (ExecutionException e) {
+                            e.printStackTrace();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+
+                        Konwertowanie konwertowanie = new Konwertowanie(odpowiedz, toWartosc);
+                        wartoscPoPrzeliczeniu.setText(konwertowanie.getToOutput());
+                        toRate.setText(konwertowanie.getToRate());
+
+                        String from = kwotaWaluty.getText().toString();
+                        String to = wartoscPoPrzeliczeniu.getText().toString();
+
+                        NotyficationShow notyficationShow = new NotyficationShow(MainActivity.this);
+                        Notification.Builder nb = notyficationShow.
+                                getAndroidChannelNotification("Currency", from + " - " + fromWartosc +
+                                        " to " + to + " - " + toWartosc);
+
+                        notyficationShow.getManager().notify(101, nb.build());
 
                     }
                 }
