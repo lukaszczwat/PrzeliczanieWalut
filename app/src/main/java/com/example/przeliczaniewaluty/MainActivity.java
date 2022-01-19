@@ -14,12 +14,14 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import java.util.concurrent.ExecutionException;
+
 public class MainActivity extends AppCompatActivity {
 
     EditText kwotaWaluty, wartoscPoPrzeliczeniu;
     Button convertButton;
     Spinner fromWaluta, toWaluta;
-    String fromWartosc, toWartosc;
+    String fromWartosc, toWartosc, odpowiedz;
     String[] toApiCurrecy;
     TextView toRate;
     ShowToast show_toast = new ShowToast();
@@ -40,15 +42,20 @@ public class MainActivity extends AppCompatActivity {
         toWaluta = findViewById(R.id.drugaWaluta);
         String[] from = {"EUR"};
         String[] to = {"USD"};
-        ArrayAdapter<String> adapterFrom = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, from);
-        adapterFrom.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        ArrayAdapter<String> adapterTo = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, to);
-        adapterFrom.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        fromWaluta.setAdapter(adapterFrom);
-        toWaluta.setAdapter(adapterTo);
+
+        RunSpinerValue(from,to);
 
         if (isNetworkConnected()){
-            //TODO: programowanie pobierania wszystkich walut
+            String question = "https://currency-converter5.p.rapidapi.com/currency/list?format=json";
+            try {
+                odpowiedz = new JSONQuestion(MainActivity.this)
+                        .execute(question)
+                        .get();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
         else{
             show_toast.showToast(getApplicationContext(),"Brak Internetu - Sprawdź połączenie i spróbuj ponownie");
@@ -56,6 +63,16 @@ public class MainActivity extends AppCompatActivity {
 
         Setup();
 
+    }
+    private void RunSpinerValue(String[] from,String[] to){
+
+
+        ArrayAdapter<String> adapterFrom = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, from);
+        adapterFrom.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        ArrayAdapter<String> adapterTo = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, to);
+        adapterFrom.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        fromWaluta.setAdapter(adapterFrom);
+        toWaluta.setAdapter(adapterTo);
     }
 
     private void Setup() {
