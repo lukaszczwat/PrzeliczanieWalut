@@ -56,6 +56,12 @@ public class MainActivity extends AppCompatActivity {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+
+            PobieranieWaluty pobieranieWaluty = new PobieranieWaluty();
+            if (pobieranieWaluty.getWaluty(odpowiedz).length > 0){
+                toApiCurrecy = pobieranieWaluty.getWaluty(odpowiedz);
+                RunSpinerValue(toApiCurrecy, toApiCurrecy);
+            }
         }
         else{
             show_toast.showToast(getApplicationContext(),"Brak Internetu - Sprawdź połączenie i spróbuj ponownie");
@@ -87,14 +93,13 @@ public class MainActivity extends AppCompatActivity {
                 if (isNetworkConnected()) {
                     if (fromWaluta == toWaluta) {
                         show_toast.showToast(getApplicationContext(),"Zmień walutę do konwersji");
-                        return;
+
                     } else if (kwotaWaluty.getText().toString().isEmpty()) {
                         show_toast.showToast(getApplicationContext(),"Wprowadź poprawną kwotę do konwersji");
-                        return;
+
                     } else {
                         //TODO: Konwertowanie wprowadzonych danych
-//                        JSONQuestion obj = new JSONQuestion();
-//                        obj.execute(kwotaWaluty.getText().toString());
+
 
                     }
                 }
