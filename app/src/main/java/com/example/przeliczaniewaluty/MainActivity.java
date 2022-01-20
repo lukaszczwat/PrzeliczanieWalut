@@ -10,7 +10,6 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.text.TextWatcher;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -144,14 +143,9 @@ public class MainActivity extends AppCompatActivity {
                                 Message message = new Message();
                                 message.what = x;
                                 message.obj = bodyNotyfication;
-                                handler.sendMessageDelayed(message, 5000);
+                                handler.sendMessageDelayed(message, 30000);
                             }
                         }).start();
-
-
-
-
-
 
 
                     }
