@@ -25,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
     String fromWartosc, toWartosc, odpowiedz;
     String[] toApiCurrecy;
     TextView toRate;
+    int x = 1;
     ShowToast show_toast = new ShowToast();
 
 
@@ -117,13 +118,19 @@ public class MainActivity extends AppCompatActivity {
 
                         String from = kwotaWaluty.getText().toString();
                         String to = wartoscPoPrzeliczeniu.getText().toString();
+                        String bodyNotyfication = from + " - " + fromWartosc + " to " + to + " - " + toWartosc;
 
-                        NotyficationShow notyficationShow = new NotyficationShow(MainActivity.this);
-                        Notification.Builder nb = notyficationShow.
-                                getAndroidChannelNotification("Currency", from + " - " + fromWartosc +
-                                        " to " + to + " - " + toWartosc);
+                        try {
+                            new AsyncNnotyfication(MainActivity.this)
+                                    .execute(x, bodyNotyfication)
+                                    .get();
+                        } catch (ExecutionException e) {
+                            e.printStackTrace();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
 
-                        notyficationShow.getManager().notify(101, nb.build());
+                        x++;
 
                     }
                 }
