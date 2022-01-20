@@ -25,7 +25,7 @@ public class AsyncNnotyfication extends AsyncTask<Object, Void, Void> {
         int numerNotyfication = (int)params[0];
         String valueNotyfication = (String)params[1];
         DataTime dataTime = new DataTime(new Date());
-        int x = 30;
+        int x = 1;
 
         try {
             do{

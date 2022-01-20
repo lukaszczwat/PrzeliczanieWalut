@@ -1,5 +1,6 @@
 package com.example.przeliczaniewaluty;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Notification;
@@ -7,6 +8,9 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -25,8 +29,9 @@ public class MainActivity extends AppCompatActivity {
     String fromWartosc, toWartosc, odpowiedz;
     String[] toApiCurrecy;
     TextView toRate;
-    int x = 1;
+
     ShowToast show_toast = new ShowToast();
+    Handler handler;
 
 
     @Override
@@ -70,6 +75,9 @@ public class MainActivity extends AppCompatActivity {
         }
 
         Setup();
+
+
+
 
     }
     private void RunSpinerValue(String[] from,String[] to){
@@ -116,21 +124,35 @@ public class MainActivity extends AppCompatActivity {
                         wartoscPoPrzeliczeniu.setText(konwertowanie.getToOutput());
                         toRate.setText(konwertowanie.getToRate());
 
-                        String from = kwotaWaluty.getText().toString();
-                        String to = wartoscPoPrzeliczeniu.getText().toString();
-                        String bodyNotyfication = from + " - " + fromWartosc + " to " + to + " - " + toWartosc;
+                        int x = 1;
 
-                        try {
-                            new AsyncNnotyfication(MainActivity.this)
-                                    .execute(x, bodyNotyfication)
-                                    .get();
-                        } catch (ExecutionException e) {
-                            e.printStackTrace();
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
+                        handler = new Handler(){
+                            @Override
+                            public void handleMessage(@NonNull Message msg) {
+                                super.handleMessage(msg);
+                                NotyficationRun(msg.what, (String)msg.obj);
+                            }
+                        };
 
-                        x++;
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                String from = kwotaWaluty.getText().toString();
+                                String to = wartoscPoPrzeliczeniu.getText().toString();
+                                String bodyNotyfication = from + " - " + fromWartosc + " to " + to + " - " + toWartosc;
+
+                                Message message = new Message();
+                                message.what = x;
+                                message.obj = bodyNotyfication;
+                                handler.sendMessageDelayed(message, 5000);
+                            }
+                        }).start();
+
+
+
+
+
+
 
                     }
                 }
@@ -143,6 +165,25 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private void NotyficationRun(int y, String  bodyNotyfication){
+
+        try {
+
+            NotyficationShow notyficationShow;
+            Notification.Builder nb;
+            notyficationShow = new NotyficationShow(MainActivity.this);
+            nb = notyficationShow.
+                    getAndroidChannelNotification("Przelicz Walutę", bodyNotyfication);
+
+            notyficationShow.getManager().notify(y, nb.build());
+
+        } catch (Exception e) {
+            String error = e.toString();
+            show_toast.showToast(MainActivity.this, "Problem z wyświetleniem notyfikacji" + error);
+
+        }
+
+    }
 
     public boolean isNetworkConnected() {
         ConnectivityManager connectivityManager

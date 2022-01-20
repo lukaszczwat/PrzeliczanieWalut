@@ -6,11 +6,13 @@ import android.app.NotificationChannelGroup;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
-import android.content.ContextWrapper;
+
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Build;
-import android.provider.Settings;
+
 
 public class NotyficationShow  {
 
@@ -74,7 +76,9 @@ public class NotyficationShow  {
             return new Notification.Builder(ctx,ctx.getString(R.string.CHANNEL_ID))
                     .setContentTitle(title)
                     .setContentText(body)
-                    .setSmallIcon(android.R.drawable.sym_def_app_icon)
+                    .setSmallIcon(R.mipmap.ic_launcher_dollar_foreground)
+                    .setLargeIcon(BitmapFactory.decodeResource(ctx.getResources(),
+                            R.mipmap.ic_launcher_dollar_foreground))
                     .setAutoCancel(true)
                     .setContentIntent(settingsIntent);
 
