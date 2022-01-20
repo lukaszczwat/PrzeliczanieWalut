@@ -4,10 +4,12 @@ import android.app.Activity;
 
 import org.json.JSONObject;
 
+
 public class Konwertowanie extends Activity {
 
-    private String odpowiedz = null;
-    private String toOutput, toCurrency, toRate;
+    final private String odpowiedz;
+    final private String toCurrency;
+    private String toOutput, toRate;
     ShowToast show_toast = new ShowToast();
     public Konwertowanie(String odpowiedz, String toCurrency){
         this.odpowiedz = odpowiedz;

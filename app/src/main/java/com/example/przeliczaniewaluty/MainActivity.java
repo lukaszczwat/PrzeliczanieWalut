@@ -18,7 +18,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import java.util.concurrent.ExecutionException;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -26,7 +26,6 @@ public class MainActivity extends AppCompatActivity {
     Button convertButton;
     Spinner fromWaluta, toWaluta;
     String fromWartosc, toWartosc, odpowiedz;
-    String[] toApiCurrecy;
     TextView toRate;
 
     ShowToast show_toast = new ShowToast();
@@ -48,25 +47,24 @@ public class MainActivity extends AppCompatActivity {
         toWaluta = findViewById(R.id.drugaWaluta);
         String[] from = {"EUR"};
         String[] to = {"USD"};
-
+        //uruchomienie widoku z Walutami EUR i USD w przypadku braku interentu oraz nie zaciągniecia walut
         RunSpinerValue(from,to);
-
+        //sprawdzenie czy jest połączenie z Interentem
         if (isNetworkConnected()){
             String question = "https://currency-converter5.p.rapidapi.com/currency/list?format=json";
             try {
+                //wysłanie zapytania do strony
                 odpowiedz = new JSONQuestion(MainActivity.this)
                         .execute(question)
                         .get();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            } catch (Exception e) {
+                show_toast.showToast(getApplicationContext(), "Problem z pobraniem waluty "+ e.toString());
             }
-
+            //tworzenie listy z pobranych walut
             PobieranieWaluty pobieranieWaluty = new PobieranieWaluty();
             if (pobieranieWaluty.getWaluty(odpowiedz).length > 0){
-                toApiCurrecy = pobieranieWaluty.getWaluty(odpowiedz);
-                RunSpinerValue(toApiCurrecy, toApiCurrecy);
+                //uruchomienie widoku z pobranymi walutami
+                RunSpinerValue(pobieranieWaluty.getWaluty(odpowiedz), pobieranieWaluty.getWaluty(odpowiedz));
             }
         }
         else{
@@ -92,60 +90,70 @@ public class MainActivity extends AppCompatActivity {
 
     private void Setup() {
 
+
         fromWaluta.setOnItemSelectedListener(new FromDropdown());
         toWaluta.setOnItemSelectedListener(new ToDropdown());
         convertButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-
+                //sprawdzenie czy jest połączenie z Internetem
                 if (isNetworkConnected()) {
+                    //sprawdzenie czy obje waluty nie są takie same
                     if (fromWaluta == toWaluta) {
                         show_toast.showToast(getApplicationContext(),"Zmień walutę do konwersji");
-
+                    //sprawdzenie czy kowata waluty nie jest pusta
                     } else if (kwotaWaluty.getText().toString().isEmpty()) {
                         show_toast.showToast(getApplicationContext(),"Wprowadź poprawną kwotę do konwersji");
 
                     } else {
+                        //string do rapid api
                         String question = "https://currency-converter5.p.rapidapi.com/currency/convert?format=json&from=" + fromWartosc + "&to=" + toWartosc + "&amount=" + kwotaWaluty.getText().toString();
-
+                        //wysłanie pytania o przekonwertowanie waluty
                         try {
                             odpowiedz = new JSONQuestion(MainActivity.this)
                                     .execute(question)
                                     .get();
-                        } catch (ExecutionException e) {
-                            e.printStackTrace();
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
+                        } catch (Exception e) {
+                            show_toast.showToast(getApplicationContext(),"Problem z konwertowaniem waluty " + e.toString());
+                        }
+                        //jeżeli odpowiedz nie jest pusta i null
+                        if(!odpowiedz.isEmpty()){
+                            //praca na odpowiedzi z rapid api, wydobywanie wartości z odpowiedzi
+                            Konwertowanie konwertowanie = new Konwertowanie(odpowiedz, toWartosc);
+                            //wpisanie wartości do aplikacji - context
+                            wartoscPoPrzeliczeniu.setText(konwertowanie.getToOutput());
+                            toRate.setText(konwertowanie.getToRate());
+                            //numer pytania które robiliści do rapid api
+                            int x = 1;
+                            //
+                            handler = new Handler(){
+                                @Override
+                                public void handleMessage(@NonNull Message msg) {
+                                    super.handleMessage(msg);
+                                    //wywołanie notyfikacji
+                                    NotyficationRun(msg.what, (String)msg.obj);
+                                }
+                            };
+                            //wywołanie nowego zadania - notyfikacji
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    String from = kwotaWaluty.getText().toString();
+                                    String to = wartoscPoPrzeliczeniu.getText().toString();
+                                    String bodyNotyfication = from + " - " + fromWartosc + " to " + to + " - " + toWartosc;
+                                    //utworzenie wiadomości do handlera
+                                    Message message = new Message();
+                                    message.what = x;
+                                    message.obj = bodyNotyfication;
+                                    //wysłanie wiadomości do handlera z opóźnieniem 30s
+                                    handler.sendMessageDelayed(message, 30000);
+                                }
+                            }).start();
+
                         }
 
-                        Konwertowanie konwertowanie = new Konwertowanie(odpowiedz, toWartosc);
-                        wartoscPoPrzeliczeniu.setText(konwertowanie.getToOutput());
-                        toRate.setText(konwertowanie.getToRate());
 
-                        int x = 1;
-
-                        handler = new Handler(){
-                            @Override
-                            public void handleMessage(@NonNull Message msg) {
-                                super.handleMessage(msg);
-                                NotyficationRun(msg.what, (String)msg.obj);
-                            }
-                        };
-
-                        new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                String from = kwotaWaluty.getText().toString();
-                                String to = wartoscPoPrzeliczeniu.getText().toString();
-                                String bodyNotyfication = from + " - " + fromWartosc + " to " + to + " - " + toWartosc;
-
-                                Message message = new Message();
-                                message.what = x;
-                                message.obj = bodyNotyfication;
-                                handler.sendMessageDelayed(message, 30000);
-                            }
-                        }).start();
 
 
                     }

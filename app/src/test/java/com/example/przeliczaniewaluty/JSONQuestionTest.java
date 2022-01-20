@@ -10,9 +10,9 @@ import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
-import java.util.concurrent.ExecutionException;
 
-@Config(constants = BuildConfig.class, sdk = Build.VERSION_CODES.O_MR1)
+
+@Config(sdk = {Build.VERSION_CODES.O_MR1})
 @RunWith(RobolectricTestRunner.class)
 public class JSONQuestionTest {
 
@@ -30,11 +30,9 @@ public class JSONQuestionTest {
             odpowiedz = new JSONQuestion(context)
                     .execute(question)
                     .get();
-        } catch (ExecutionException e) {
+        } catch (Exception e) {
             mError = e;
 
-        } catch (InterruptedException e) {
-            mError = e;
         }
 
         assertNull(mError);

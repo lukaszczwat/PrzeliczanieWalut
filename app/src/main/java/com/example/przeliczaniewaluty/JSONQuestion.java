@@ -3,18 +3,21 @@ package com.example.przeliczaniewaluty;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
 
+import java.util.Objects;
+
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
 public class JSONQuestion extends AsyncTask<String, Void, String> {
-    private ProgressDialog dialog;
+    final private ProgressDialog dialog;
 
     public JSONQuestion(MainActivity activity) {
+
         dialog = new ProgressDialog(activity);
     }
 
-    private Exception mError = null;
+    private Exception mError;
     private String answer = null;
     @Override
     protected String doInBackground(String... params) {
@@ -27,9 +30,9 @@ public class JSONQuestion extends AsyncTask<String, Void, String> {
                 .build();
         try {
             Response response = client.newCall(request).execute();
-            answer = response.body().string();
+            answer = Objects.requireNonNull(response.body()).string();
         } catch (Exception e) {
-            mError = e;
+            setmError(e);
         }
         return answer;
     }
@@ -55,4 +58,11 @@ public class JSONQuestion extends AsyncTask<String, Void, String> {
 
     }
 
+    public Exception getmError() {
+        return mError;
+    }
+
+    public void setmError(Exception mError) {
+        this.mError = mError;
+    }
 }

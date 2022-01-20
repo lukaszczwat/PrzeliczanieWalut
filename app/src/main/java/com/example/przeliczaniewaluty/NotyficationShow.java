@@ -6,9 +6,7 @@ import android.app.NotificationChannelGroup;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
-
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Build;
@@ -17,7 +15,7 @@ import android.os.Build;
 public class NotyficationShow  {
 
     private NotificationManager mManager;
-    private Context ctx;
+    final private Context ctx;
 
     public NotyficationShow(Context ctx) {
 

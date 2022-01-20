@@ -11,7 +11,7 @@ import java.util.List;
 public class PobieranieWaluty extends Activity {
 
     ShowToast show_toast = new ShowToast();
-    private String[] toApiCurrecy;
+
 
     public String[] getWaluty(String odpowiedz){
         try {
@@ -24,7 +24,7 @@ public class PobieranieWaluty extends Activity {
             List<String> skillsArray = Arrays.asList(currency.split(","));
             int size = skillsArray.size();
             Collections.sort(skillsArray);
-            return toApiCurrecy = skillsArray.toArray(new String[size]);
+            return skillsArray.toArray(new String[size]);
 
 
 
