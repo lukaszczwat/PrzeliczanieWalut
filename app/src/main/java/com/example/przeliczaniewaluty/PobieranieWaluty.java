@@ -1,6 +1,7 @@
 package com.example.przeliczaniewaluty;
 
-import android.app.Activity;
+
+import android.content.Context;
 
 import org.json.JSONObject;
 
@@ -8,13 +9,14 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class PobieranieWaluty extends Activity {
+public class PobieranieWaluty{
 
     ShowToast show_toast = new ShowToast();
+    Context ctx;
 
-
-    public String[] getWaluty(String odpowiedz){
+    public String[] getWaluty(String odpowiedz, Context ctx){
         try {
+            this.ctx = ctx;
             JSONObject movieObject = new JSONObject(odpowiedz);
 
             String currency = (String) movieObject.getString("currencies");
@@ -30,7 +32,7 @@ public class PobieranieWaluty extends Activity {
 
 
         } catch (Exception e) {
-            show_toast.showToast(getApplicationContext(),"Coś poszło źle przy pobieraniu Waluty " + e.toString());
+            show_toast.showToast(this.ctx,"Coś poszło źle przy pobieraniu Waluty " + e.toString());
         }
         return null;
     }

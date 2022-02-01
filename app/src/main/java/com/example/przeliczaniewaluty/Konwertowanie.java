@@ -1,17 +1,20 @@
 package com.example.przeliczaniewaluty;
 
 import android.app.Activity;
+import android.content.Context;
 
 import org.json.JSONObject;
 
 
-public class Konwertowanie extends Activity {
+public class Konwertowanie{
 
     final private String odpowiedz;
     final private String toCurrency;
     private String toOutput, toRate;
+    final Context ctx;
     ShowToast show_toast = new ShowToast();
-    public Konwertowanie(String odpowiedz, String toCurrency){
+    public Konwertowanie(String odpowiedz, String toCurrency, Context ctx){
+        this.ctx = ctx;
         this.odpowiedz = odpowiedz;
         this.toCurrency = toCurrency;
         Run();
@@ -40,7 +43,7 @@ public class Konwertowanie extends Activity {
 
 
         } catch (Exception e) {
-            show_toast.showToast(getApplicationContext(),"Coś poszło źle w Konwertowaniu " + e.toString());
+            show_toast.showToast(this.ctx,"Coś poszło źle w Konwertowaniu " + e.toString());
         }
     }
 
